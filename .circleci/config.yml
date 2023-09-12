@@ -38,7 +38,7 @@ jobs:
             python3 test_billing_system_1.py
 
 
-  create-artifacts-and-zip:
+  create-artifact-and-zip:
     docker:
       - image: cimg/python:3.11.2
     steps:
