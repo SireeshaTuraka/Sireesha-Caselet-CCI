@@ -1,0 +1,116 @@
+Version: '2.1'
+
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.11.2
+    steps:
+      - checkout
+      - run:
+          name: run main file
+          command: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+            python3 billing _system.py
+
+  unit-test-1:
+    docker:
+      - image: cimg/python:3.11.2
+    steps:
+      - checkout
+      - run:
+          name: run unit test 1
+          command: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+            python3 test_billing_system_1.py
+
+  unit-test-2:
+    docker:
+      - image: cimg/python:3.11.2
+    steps:
+      - checkout
+      - run:
+          name: run unit test 2
+          command: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+            python3 test_billing_system_1.py
+
+
+  create-artifacts-and-zip:
+    docker:
+      - image: cimg/python:3.11.2
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          docker build  -t ${IMAGE}:${Environment} -f Dockerfile .
+          docker images 
+          mkdir -p python_image
+          docker save -o ${IMAGE}:${Environment}.zip ${IMAGE}:${Environment}
+          mv ${IMAGE}:${Environment}.zip python_image
+      - store_artifacts:
+          path: python_image
+
+  build-cache:
+    docker:
+      - image: cimg/python:3.11.2
+    steps:
+      - checkout
+      - restore-cache:
+          key: python-requirements-v1-{{ checksum "requirements.txt" }}
+      - run:
+          name: run main file
+          command: python3 billing_system.py
+      - save-cache:
+          key: python-requirements-v1-{{ checksum "requirements.txt"}}
+          paths:
+            - "~/.cache/pip"
+
+workflows:
+
+  Sireesha-caselet-cci
+    jobs:
+      - build
+      - unit-test-1:
+          requires:
+            - build
+      - unit-test-2:
+          requires:
+            - build
+      - hold:
+          type: approval
+          requires:
+            - unit-test-1
+            - unit-test-2
+      - create-artifact-and-zip:
+          requires:
+            - hold
+
+  workflow_2:
+    triggers:
+      - schedule:
+          cron: "0 17 * * *"
+          filters:
+            branches:
+              only:
+                - main
+
+    jobs:
+      - build-cache
+      - unit-test-1:
+          requires:
+            - build-cache
+      - unit-test-2:
+          requires:
+            - unit-test-1
+      - hold:
+          type: approval
+          requires:
+            - unit-test-2
+      - create-artifact-and-zip:
+          requires:
+            - hold
+
+            
