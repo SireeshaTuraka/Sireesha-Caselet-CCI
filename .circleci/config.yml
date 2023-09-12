@@ -70,7 +70,7 @@ jobs:
 
 workflows:
   version: 2.1
-  Sireesha-caselet-cci
+  Sireesha-caselet-cci:
     jobs:
       - build
       - unit-test-1:
