@@ -47,11 +47,11 @@ jobs:
       - checkout
       - setup_remote_docker
       - run: |
-          docker build  -t ${IMAGE}:${Environment} -f Dockerfile .
+          docker build .  -t ${IMAGE}:${VERSION}
           docker images 
           mkdir -p python_image
-          docker save -o ${IMAGE}:${Environment}.zip ${IMAGE}:${Environment}
-          mv ${IMAGE}:${Environment}.zip python_image
+          docker save -o ${IMAGE}:${VERSION}.zip ${IMAGE}:${VERSION}
+          mv ${IMAGE}:${VERSION}.zip python_image
       - store_artifacts:
           path: python_image
 
