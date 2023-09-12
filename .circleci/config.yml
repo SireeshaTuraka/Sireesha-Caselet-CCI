@@ -1,41 +1,43 @@
 Version: '2.1'
 
+# Reusable commands
+commands:
+  python_parameter:
+    steps:
+      - run:
+          command: |  
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
 jobs:
   build:
     docker:
       - image: cimg/python:3.11.2
     steps:
       - checkout
+      - python_parameter
       - run:
           name: run main file
-          command: |
-            python3 -m pip install --upgrade pip
-            pip install -r requirements.txt
-            python3 billing _system.py
+          command: python3 billing _system.py
 
   unit-test-1:
     docker:
       - image: cimg/python:3.11.2
     steps:
       - checkout
+      - python_parameter
       - run:
           name: run unit test 1
-          command: |
-            python3 -m pip install --upgrade pip
-            pip install -r requirements.txt
-            python3 test_billing_system_1.py
+          command: python3 test_billing_system_1.py
 
   unit-test-2:
     docker:
       - image: cimg/python:3.11.2
     steps:
       - checkout
+      - python_parameter
       - run:
           name: run unit test 2
-          command: |
-            python3 -m pip install --upgrade pip
-            pip install -r requirements.txt
-            python3 test_billing_system_1.py
+          command: python3 test_billing_system_1.py
 
 
   create-artifact-and-zip:
@@ -60,12 +62,10 @@ jobs:
       - checkout
       - restore_cache:
           key: python-requirements-v1-{{ checksum "requirements.txt" }}
+      - python_parameter
       - run:
           name: run main file
-          command: |
-            python3 -m pip install --upgrade pip
-            pip install -r requirements.txt
-            python3 billing_system.py
+          command: python3 billing_system.py
       - save_cache:
           key: python-requirements-v1-{{ checksum "requirements.txt"}}
           paths:
