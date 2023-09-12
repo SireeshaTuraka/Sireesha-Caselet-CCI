@@ -62,7 +62,10 @@ jobs:
           key: python-requirements-v1-{{ checksum "requirements.txt" }}
       - run:
           name: run main file
-          command: python3 billing_system.py
+          command: |
+            python3 -m pip install --upgrade pip
+            pip install -r requirements.txt
+            python3 billing_system.py
       - save-cache:
           key: python-requirements-v1-{{ checksum "requirements.txt"}}
           paths:
