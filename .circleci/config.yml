@@ -17,7 +17,7 @@ jobs:
       - python_parameter
       - run:
           name: run main file
-          command: python3 billing _system.py
+          command: python3 billing_system.py
 
   unit-test-1:
     docker:
