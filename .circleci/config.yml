@@ -51,9 +51,9 @@ jobs:
           docker images 
           mkdir -p python_image
           docker save -o ${IMAGE}:${VERSION}.zip ${IMAGE}:${VERSION}
-          mv ${IMAGE}:${VERSION}.zip python_image
+          mv ${IMAGE}:${VERSION}.zip python_image/
       - store_artifacts:
-          path: python_image
+          path: python_image/
 
   build_cache:
     docker:
