@@ -68,8 +68,9 @@ jobs:
           paths:
             - "~/.cache/pip"
 
+
+version: 2.1
 workflows:
-  version: 2.1
   Sireesha-caselet-cci:
     jobs:
       - build
